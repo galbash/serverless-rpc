@@ -1,0 +1,33 @@
+{
+  "name": "serverless-rpc",
+  "version": "1.0.0",
+  "description": "rpc server using aws-lambda",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "babel lib -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/galbash/serverless-rpc.git"
+  },
+  "keywords": [
+    "thrift",
+    "serverless",
+    "rpc",
+    "lambda"
+  ],
+  "author": "Tal Vintrob",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/galbash/serverless-rpc/issues"
+  },
+  "homepage": "https://github.com/galbash/serverless-rpc#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5"
+  }
+}
