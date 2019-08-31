@@ -1,33 +1,25 @@
 from thrift.protocol import THeaderProtocol
 
 from .TFunctionServer import TFunctionServer
+from ..transport.TLambda import TLambdaBaseTransport
+
 
 class TLambdaServer(TFunctionServer):
-    def serve(self):
-        client = self.serverTransport.accept()
+    def handle(self, event, context):
+        client = TLambdaBaseTransport(event.encode('utf-8'))
         itrans = self.inputTransportFactory.getTransport(client)
         iprot = self.inputProtocolFactory.getProtocol(itrans)
-
-	# for THeaderProtocol, we must use the same protocol instance for
-	# input and output so that the response is in the same dialect that
-	# the server detected the request was in.
-	if isinstance(self.inputProtocolFactory, THeaderProtocolFactory):
-	    otrans = None
-	    oprot = iprot
-	else:
-	    otrans = self.outputTransportFactory.getTransport(client)
-	    oprot = self.outputProtocolFactory.getProtocol(otrans)
+        otrans = self.outputTransportFactory.getTransport(client)
+        oprot = self.outputProtocolFactory.getProtocol(otrans)
 
         self.processor.process(iprot, oprot)
-        result = otrans.getvalue() if otrans else itrans.getvalue()
-        itrans.close()
-        if otrans:
-            otrans.close()
 
-        return result
+        return oprot.read().decode('utf-8')
 
-    def handle(event, context):
-        self.serverTransport.set_invocation(event, context)
-        return self.serve
-
-
+        # not supported yet
+        # if isinstance(self.inputProtocolFactory, THeaderProtocolFactory):
+        # otrans = None
+        # oprot = iprot
+        # else:
+        # otrans = self.outputTransportFactory.getTransport(client)
+        # oprot = self.outputProtocolFactory.getProtocol(otrans)

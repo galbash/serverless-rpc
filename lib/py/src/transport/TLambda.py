@@ -1,13 +1,13 @@
 import base64
 import binascii
 import json
-from io import BytesIO
 
 import boto3
 from thrift.transport import TTransport
-from .TFunction import FunctionTransportError, TFunctionServerTransportBase
+from thrift.compat import BufferIO
 
-class LambdaTransportError(FunctionTransportError):
+
+class LambdaTransportError(TTransport.TTransportException):
     """
     Base class for Lambda Transport errors.
     """
@@ -32,46 +32,39 @@ class PayloadDecodeError(LambdaTransportError):
         super(PayloadDecodeError, self).__init__('Failed decoding payload')
         self.payload = payload
 
+
 class TLambdaBaseTransport(TTransport.TMemoryBuffer):
     def __init__(self, value=None):
         if value:
-            value = base64.b64decode(json.loads(
-                    value
-                ).encode('utf-8'))
+            value = base64.b64decode(value)
         super().__init__(value=value)
 
-    def getvalue():
-        """
-        returns the stored value, in a Lambda transport safe way
-        (base 64 encoded string)
-        """
-        payload = super(TLambdaBaseTransport, self).getvalue()
-        return json.dumps(
-            base64.b64encode(payload).decode('utf-8')
-        ).encode('utf-8')
+    def flush(self):
+        self._buffer = BufferIO(base64.b64encode(self._buffer.read()))
 
-class TLambdaClientTransport(TMessageSenderTransport):
+
+class TLambdaClientTransport(TLambdaBaseTransport):
     def __init__(self, function_name, qualifier=None, **kwargs):
         """
         @param function_name: The name of the server Lambda
         @param qualifier: The Lambda qualifier to use. Defaults to $LATEST
         @param kwargs: Additional arguments, passed to the Lambda client constructor
         """
-        super(TLambdaTransport, self).__init__()
+        super().__init__()
         self.__client = boto3.client('lambda', **kwargs)
         self.__function_name = function_name
         self.__qualifier = qualifier
 
     def flush(self):
-        msg = self.getvalue()
-        result = self.sendMessage(msg)
+        super().flush()
+        result = self.sendMessage(self._buffer.read())
         self.write(result)
 
     def sendMessage(self, message):
         params = {
             'FunctionName': self.__function_name,
             'InvocationType': 'RequestResponse',
-            'Payload': message
+            'Payload': json.dumps(message.decode('utf-8'))
         }
         if self.__qualifier:
             params['Qualifier'] = self.__qualifier
@@ -89,15 +82,3 @@ class TLambdaClientTransport(TMessageSenderTransport):
         except (binascii.Error, json.JSONDecodeError, ) as e:
             raise PayloadDecodeError(raw_payload) from e
 
-class TLambdaServerTransport(TFunctionServerTransportBase):
-    def set_payload(self, event, context):
-        """
-        @param event: The event the Lambda was triggered with
-        @param context: The context the Lambda was triggered with
-        """
-        self.__context = context
-        self.__event = event
-        self.payload = base64.base64.decode(event.encode('utf-8'))
-
-    def accept(self):
-        return TLambdaBaseTransport(self.__input)
