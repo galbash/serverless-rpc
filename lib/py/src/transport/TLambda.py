@@ -4,14 +4,15 @@ import json
 from io import BytesIO
 
 import boto3
-from thrift import Thrift
 from thrift.transport import TTransport
+from .TFunction import FunctionTransportError, TFunctionServerTransportBase
 
-class LambdaTransportError(Thrift.TException):
+class LambdaTransportError(FunctionTransportError):
     """
     Base class for Lambda Transport errors.
     """
     pass
+
 
 class LambdaServerError(LambdaTransportError):
     def __init__(self, response):
@@ -22,6 +23,7 @@ class LambdaServerError(LambdaTransportError):
         self.ecode = response['statusCode']
         self.etype = response['FunctionError']
 
+
 class PayloadDecodeError(LambdaTransportError):
     def __init__(self, payload):
         """
@@ -30,23 +32,25 @@ class PayloadDecodeError(LambdaTransportError):
         super(PayloadDecodeError, self).__init__('Failed decoding payload')
         self.payload = payload
 
+class TLambdaBaseTransport(TTransport.TMemoryBuffer):
+    def __init__(self, value=None):
+        if value:
+            value = base64.b64decode(json.loads(
+                    value
+                ).encode('utf-8'))
+        super().__init__(value=value)
 
-class TMessageSenderTransport(TTransport.TTransportBase):
-    def __init__(self):
-        self.__wbuf = BytesIO()
+    def getvalue():
+        """
+        returns the stored value, in a Lambda transport safe way
+        (base 64 encoded string)
+        """
+        payload = super(TLambdaBaseTransport, self).getvalue()
+        return json.dumps(
+            base64.b64encode(payload).decode('utf-8')
+        ).encode('utf-8')
 
-    def write(self, buf):
-        self.__wbuf.write(buf)
-
-    def flush(self):
-        msg = self.__wbuf.getvalue()
-        self.__wbuf = BytesIO()
-        return self.sendMessage(msg)
-
-    def sendMessage(self, message):
-        raise NotImplementedError
-
-class TLambdaTransport(TMessageSenderTransport):
+class TLambdaClientTransport(TMessageSenderTransport):
     def __init__(self, function_name, qualifier=None, **kwargs):
         """
         @param function_name: The name of the server Lambda
@@ -58,11 +62,16 @@ class TLambdaTransport(TMessageSenderTransport):
         self.__function_name = function_name
         self.__qualifier = qualifier
 
+    def flush(self):
+        msg = self.getvalue()
+        result = self.sendMessage(msg)
+        self.write(result)
+
     def sendMessage(self, message):
         params = {
             'FunctionName': self.__function_name,
             'InvocationType': 'RequestResponse',
-            'Payload': json.dumps(base64.b64encode(message).decode('utf-8')).encode('utf-8'),
+            'Payload': message
         }
         if self.__qualifier:
             params['Qualifier'] = self.__qualifier
@@ -79,3 +88,16 @@ class TLambdaTransport(TMessageSenderTransport):
             ).encode('utf-8'))
         except (binascii.Error, json.JSONDecodeError, ) as e:
             raise PayloadDecodeError(raw_payload) from e
+
+class TLambdaServerTransport(TFunctionServerTransportBase):
+    def set_payload(self, event, context):
+        """
+        @param event: The event the Lambda was triggered with
+        @param context: The context the Lambda was triggered with
+        """
+        self.__context = context
+        self.__event = event
+        self.payload = base64.base64.decode(event.encode('utf-8'))
+
+    def accept(self):
+        return TLambdaBaseTransport(self.__input)
