@@ -1,6 +1,7 @@
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
+
 class TFunctionServer:
     """
     A base class for Function (Faas) Thrift servers
@@ -13,9 +14,10 @@ class TFunctionServer:
         inputTransportFactory, outputTransportFactory,
         inputProtocolFactory, outputProtocolFactory)
     """
+
     def __init__(self, *args):
         if (len(args) == 1):
-            self.__initArgs__(args[0], 
+            self.__initArgs__(args[0],
                               TTransport.TTransportFactoryBase(),
                               TTransport.TTransportFactoryBase(),
                               TBinaryProtocol.TBinaryProtocolFactory(),
@@ -25,11 +27,10 @@ class TFunctionServer:
         elif (len(args) == 5):
             self.__initArgs__(args[0], args[1], args[2], args[3], args[4])
 
-    def __initArgs__(self, processor, serverTransport,
+    def __initArgs__(self, processor,
                      inputTransportFactory, outputTransportFactory,
                      inputProtocolFactory, outputProtocolFactory):
         self.processor = processor
-        self.serverTransport = serverTransport
         self.inputTransportFactory = inputTransportFactory
         self.outputTransportFactory = outputTransportFactory
         self.inputProtocolFactory = inputProtocolFactory

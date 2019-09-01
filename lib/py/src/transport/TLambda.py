@@ -20,7 +20,8 @@ class LambdaServerError(LambdaTransportError):
         @param response: The response received from Lambda
         """
         super(LambdaServerError, self).__init__(response['Payload'].read())
-        self.ecode = response['statusCode']
+        print(response)
+        self.ecode = response['StatusCode']
         self.etype = response['FunctionError']
 
 
@@ -40,7 +41,10 @@ class TLambdaBaseTransport(TTransport.TMemoryBuffer):
         super().__init__(value=value)
 
     def flush(self):
-        self._buffer = BufferIO(base64.b64encode(self._buffer.read()))
+        x = self._buffer.read()
+        print(x)
+        self._buffer = BufferIO(base64.b64encode(x))
+        #self._buffer = BufferIO(base64.b64encode(self._buffer.read()))
 
 
 class TLambdaClientTransport(TLambdaBaseTransport):
@@ -61,11 +65,13 @@ class TLambdaClientTransport(TLambdaBaseTransport):
         self.write(result)
 
     def sendMessage(self, message):
+        print('message', message)
         params = {
             'FunctionName': self.__function_name,
             'InvocationType': 'RequestResponse',
             'Payload': json.dumps(message.decode('utf-8'))
         }
+        print('params', params)
         if self.__qualifier:
             params['Qualifier'] = self.__qualifier
 

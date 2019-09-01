@@ -1,5 +1,3 @@
-from thrift.protocol import THeaderProtocol
-
 from .TFunctionServer import TFunctionServer
 from ..transport.TLambda import TLambdaBaseTransport
 
@@ -23,3 +21,6 @@ class TLambdaServer(TFunctionServer):
         # else:
         # otrans = self.outputTransportFactory.getTransport(client)
         # oprot = self.outputProtocolFactory.getProtocol(otrans)
+    def __call__(self, event, context):
+        print(event)
+        return self.handle(event, context)
