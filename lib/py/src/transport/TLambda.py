@@ -19,8 +19,7 @@ class LambdaServerError(LambdaTransportError):
         """
         @param response: The response received from Lambda
         """
-        super(LambdaServerError, self).__init__(response['Payload'].read())
-        print(response)
+        super(LambdaServerError, self).__init__(message=response['Payload'].read().decode('utf-8'))
         self.ecode = response['StatusCode']
         self.etype = response['FunctionError']
 
@@ -30,21 +29,65 @@ class PayloadDecodeError(LambdaTransportError):
         """
         @param payload: The payload we failed decoding
         """
-        super(PayloadDecodeError, self).__init__('Failed decoding payload')
+        super(PayloadDecodeError, self).__init__(message='Failed decoding payload')
         self.payload = payload
 
 
-class TLambdaBaseTransport(TTransport.TMemoryBuffer):
+class TTransformTransport(TTransport.TTransportBase):
+    def __init__(self, value=None, offset=0):
+        """value -- a value to read from for stringio
+        If value is set, the read buffer will be initialized with it
+        otherwise, it is for writing"""
+        if value is not None:
+            self.__read_buffer = BufferIO(value)
+        else:
+            self.__read_buffer = BufferIO()
+        if offset:
+            self.__read_buffer.seek(offset)
+        self.__write_buffer = BufferIO()
+
+    def isOpen(self):
+        return (not self.__read_buffer.closed) and (not self.__write_buffer.closed)
+
+    def open(self):
+        pass
+
+    def close(self):
+        self.__read_buffer.close()
+        self.__write_buffer.close()
+
+    def read(self, sz):
+        return self.__read_buffer.read(sz)
+
+    def write(self, buf):
+        self.__write_buffer.write(buf)
+
+    def _transform(self, input):
+        """
+        Transforms the data written, and sets it as data to be read
+        :param input: The data written to the transport
+        :return: The data to set as readble from the transport
+        """
+        return input
+
+    def flush(self):
+        self.__read_buffer = BufferIO(self._transform(self.__write_buffer.getvalue()))
+        self.__write_buffer = BufferIO()
+
+    def getvalue(self):
+        return self.__read_buffer.getvalue()
+
+
+class TLambdaBaseTransport(TTransformTransport):
     def __init__(self, value=None):
         if value:
             value = base64.b64decode(value)
         super().__init__(value=value)
 
-    def flush(self):
-        x = self._buffer.read()
-        print(x)
-        self._buffer = BufferIO(base64.b64encode(x))
-        #self._buffer = BufferIO(base64.b64encode(self._buffer.read()))
+
+    def _transform(self, input):
+        trans_input = super()._transform(input)
+        return base64.b64encode(trans_input)
 
 
 class TLambdaClientTransport(TLambdaBaseTransport):
@@ -59,19 +102,16 @@ class TLambdaClientTransport(TLambdaBaseTransport):
         self.__function_name = function_name
         self.__qualifier = qualifier
 
-    def flush(self):
-        super().flush()
-        result = self.sendMessage(self._buffer.read())
-        self.write(result)
+    def _transform(self, input):
+        trans_input = super()._transform(input)
+        return self.sendMessage(trans_input)
 
     def sendMessage(self, message):
-        print('message', message)
         params = {
             'FunctionName': self.__function_name,
             'InvocationType': 'RequestResponse',
             'Payload': json.dumps(message.decode('utf-8'))
         }
-        print('params', params)
         if self.__qualifier:
             params['Qualifier'] = self.__qualifier
 
@@ -87,4 +127,3 @@ class TLambdaClientTransport(TLambdaBaseTransport):
             ).encode('utf-8'))
         except (binascii.Error, json.JSONDecodeError, ) as e:
             raise PayloadDecodeError(raw_payload) from e
-

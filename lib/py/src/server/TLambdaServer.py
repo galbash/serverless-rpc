@@ -12,7 +12,8 @@ class TLambdaServer(TFunctionServer):
 
         self.processor.process(iprot, oprot)
 
-        return oprot.read().decode('utf-8')
+        result = otrans.getvalue().decode('utf-8')
+        return result
 
         # not supported yet
         # if isinstance(self.inputProtocolFactory, THeaderProtocolFactory):
@@ -22,5 +23,4 @@ class TLambdaServer(TFunctionServer):
         # otrans = self.outputTransportFactory.getTransport(client)
         # oprot = self.outputProtocolFactory.getProtocol(otrans)
     def __call__(self, event, context):
-        print(event)
         return self.handle(event, context)
