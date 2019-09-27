@@ -8,17 +8,9 @@
         "json"
     ],
     "rules": {
+        "class-methods-use-this": "off",
         "indent": ["error", 2],
         "function-paren-newline": ["error", "consistent"],
-        "require-jsdoc": ["error", {
-            "require": {
-                "FunctionDeclaration": true,
-                "MethodDefinition": true,
-                "ClassDeclaration": true,
-                "ArrowFunctionExpression": false,
-                "FunctionExpression": true
-            }
-        }],
         "operator-linebreak": ["error", "after"],
         "valid-jsdoc": ["error", {
             "requireReturn": false

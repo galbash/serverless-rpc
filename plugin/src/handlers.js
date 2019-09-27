@@ -1,11 +1,13 @@
+import { join } from 'path';
+import _ from 'lodash';
+
 const WRAPPER_CODE = {
   python: `
-from HANDLER_PATH import HANDLER
+from HANDLER_PATH import HANDLER as rpc_internal_handler
 from SERVICE_PATH import SERVICE
 from sls_rpc.server.TLambdaServer import TLambdaServer
 
-handler = CONTROLLER()
-processor = SERVICE.Processor(handler)
+processor = SERVICE.Processor(rpc_internal_handler)
 EXPORTED_SERVER = TLambdaServer(processor)
 `,
 };
@@ -17,26 +19,31 @@ const FILE_NAME_BY_LANG_GENERATORS = {
 
 export const SUPPORTED_LANGUAGES = Object.keys(WRAPPER_CODE);
 
-export function generateWrapperCode(config) {
-  let { wrapper } = (func.epsagon || {});
-  if (!wrapper) {
-    wrapper = DEFAULT_WRAPPERS[func.language];
-  }
-
-  const relativePath = (
-    func.language === 'python' ?
-      func.relativePath.replace(/\//g, '.').replace(/\\/g, '.') :
-      func.relativePath
+function getPathByLanguage(relativePath, language) {
+  const path = (
+    language === 'python' ?
+      relativePath.replace(/\//g, '.').replace(/\\/g, '.') :
+      relativePath
   );
+  return path;
+}
+
+export function generateWrapperCode(func, config) {
+  const relativePath = getPathByLanguage(func.relativePath, func.language);
+  const { exportedHandlerName = func.rpcHandlerObject } = func;
+  const [serviceDirName, serviceName] = _.last(
+    func.rpcConfig.service.replace(/\\/g, '/').split('/')
+  ).split('.');
+  const servicePath = getPathByLanguage(join(
+    func.rpcConfig.outputPath || config.outputPath,
+    serviceDirName
+  ), func.language);
   return WRAPPER_CODE[func.language]
-    .replace(/RELATIVE_PATH/g, relativePath)
-    .replace(/METHOD/g, func.method)
-    .replace(/WRAPPER_TYPE/g, wrapper)
-    .replace(/TOKEN/g, epsagonConf.token)
-    .replace(/APP_NAME/g, epsagonConf.appName)
-    .replace(/COLLECTOR_URL/g, epsagonConf.collectorURL ?
-      `'${epsagonConf.collectorURL}'` : undefined)
-    .replace(/METADATA_ONLY/g, epsagonConf.metadataOnly === true ? '1' : '0');
+    .replace(/HANDLER_PATH/g, relativePath)
+    .replace(/HANDLER/g, func.rpcHandlerObject)
+    .replace(/SERVICE_PATH/g, servicePath)
+    .replace(/SERVICE/g, serviceName)
+    .replace(/EXPORTED_SERVER/g, exportedHandlerName);
 }
 
 /**
@@ -45,5 +52,5 @@ export function generateWrapperCode(config) {
  * @return {String} The generated name.
  */
 export function generateWrapperExt(func) {
-  return FILE_NAME_BY_LANG_GENERATORS[func.language](func.epsagonHandler);
+  return FILE_NAME_BY_LANG_GENERATORS[func.language](func.rpcHandlerFile);
 }

@@ -1,7 +1,6 @@
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import { eslint } from 'rollup-plugin-eslint';
-import uglify from 'rollup-plugin-uglify-es';
 import babel from 'rollup-plugin-babel';
 
 export default {
@@ -20,11 +19,6 @@ export default {
       runtimeHelpers: true,
       exclude: 'node_modules/**',
     }),
-    commonjs(),
-    (process.env.NODE_ENV === 'production' ? uglify({
-      output: {
-        beautify: false,
-      },
-    }) : null),
+    commonjs()
   ],
 };
