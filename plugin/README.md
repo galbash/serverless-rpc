@@ -48,7 +48,7 @@ functions:
                                                      # Calculator service in tutorial.thrift file
 ```
 
-## Client generation
+## Client Generation
 In order to generate clients for the service, define clients to the server:
 ```
 functions:
