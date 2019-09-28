@@ -1,5 +1,5 @@
 {
- "tagFormat": "py-v${version}"
+ "tagFormat": "py-v${version}",
  "plugins": [
    ["@semantic-release/commit-analyzer", {
      "preset": "angular",
