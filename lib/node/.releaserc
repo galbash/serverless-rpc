@@ -1,4 +1,5 @@
 {
+ "tagFormat": "node-v${version}"
  "plugins": [
    ["@semantic-release/commit-analyzer", {
      "preset": "angular",
@@ -14,6 +15,12 @@
        {"type": "feat", "scope": "/node.*/", "release": "minor"},
        {"type": "fix", "scope": "/node.*/", "release": "patch"},
        {"type": "perf", "scope": "/node.*/", "release": "patch"},
+
+       {"breaking": true, "scope": "/all.*/", "release": "major"},
+       {"revert": true, "scope": "/all.*/", "release": "patch"},
+       {"type": "feat", "scope": "/all.*/", "release": "minor"},
+       {"type": "fix", "scope": "/all.*/", "release": "patch"},
+       {"type": "perf", "scope": "/all.*/", "release": "patch"},
      ]
    }],
    "@semantic-release/release-notes-generator",

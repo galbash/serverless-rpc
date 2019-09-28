@@ -1,4 +1,5 @@
 {
+ "tagFormat": "py-v${version}"
  "plugins": [
    ["@semantic-release/commit-analyzer", {
      "preset": "angular",
@@ -8,11 +9,18 @@
        {"type": "feat", "release": false},
        {"type": "fix", "release": false},
        {"type": "perf", "release": false},
+
        {"breaking": true, "scope": "/py.*/", "release": "major"},
        {"revert": true, "scope": "/py.*/", "release": "patch"},
        {"type": "feat", "scope": "/py.*/", "release": "minor"},
        {"type": "fix", "scope": "/py.*/", "release": "patch"},
        {"type": "perf", "scope": "/py.*/", "release": "patch"},
+
+       {"breaking": true, "scope": "/all.*/", "release": "major"},
+       {"revert": true, "scope": "/all.*/", "release": "patch"},
+       {"type": "feat", "scope": "/all.*/", "release": "minor"},
+       {"type": "fix", "scope": "/all.*/", "release": "patch"},
+       {"type": "perf", "scope": "/all.*/", "release": "patch"},
      ]
    }],
    "@semantic-release/release-notes-generator",
