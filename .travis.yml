@@ -14,3 +14,11 @@ matrix:
         - cd lib/py
         - bash scripts/publish.sh
 
+    - languange: node_js
+      node_js: lts/*
+      before_install:
+        - cd plugin
+
+      script:
+        - npm run build && npm run semantic-release
+

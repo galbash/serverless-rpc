@@ -1,0 +1,23 @@
+{
+ "plugins": [
+   ["@semantic-release/commit-analyzer", {
+     "preset": "angular",
+     "releaseRules": [
+       {"breaking": true, "release": false},
+       {"revert": true, "release": false},
+       {"type": "feat", "release": false},
+       {"type": "fix", "release": false},
+       {"type": "perf", "release": false},
+
+       {"breaking": true, "scope": "/plugin.*/", "release": "major"},
+       {"revert": true, "scope": "/plugin.*/", "release": "patch"},
+       {"type": "feat", "scope": "/plugin.*/", "release": "minor"},
+       {"type": "fix", "scope": "/plugin.*/", "release": "patch"},
+       {"type": "perf", "scope": "/plugin.*/", "release": "patch"},
+     ]
+   }],
+   "@semantic-release/release-notes-generator",
+   "@semantic-release/npm",
+   "@semantic-release/github"
+  ]
+}
