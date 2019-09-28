@@ -12,5 +12,5 @@ matrix:
 
       script:
         - cd lib/py
-        - bash scripts/release.sh
+        - bash scripts/publish.sh
 
