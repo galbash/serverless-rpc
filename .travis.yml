@@ -23,3 +23,12 @@ matrix:
       script:
         - npm run build && npm run semantic-release
 
+    - languange: node_js
+      node_js:
+        - node
+      before_install:
+        - cd lib/node
+
+      script:
+        - npm run build && npm run semantic-release
+
