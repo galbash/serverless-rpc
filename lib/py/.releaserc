@@ -3,18 +3,16 @@
    ["@semantic-release/commit-analyzer", {
      "preset": "angular",
      "releaseRules": [
-       {"breaking": true, "scope": "/py.*/", "release": "major"},
-       {"revert": true, "scope": "/py.*/", "release": "patch"},
-       {"type": "feat", "scope": "/py.*/", "release": "minor"},
-       {"type": "fix", "scope": "/py.*/", "release": "patch"},
-       {"type": "perf", "scope": "/py.*/", "release": "patch"},
-
        {"breaking": true, "release": false},
        {"revert": true, "release": false},
        {"type": "feat", "release": false},
        {"type": "fix", "release": false},
        {"type": "perf", "release": false},
-
+       {"breaking": true, "scope": "/py.*/", "release": "major"},
+       {"revert": true, "scope": "/py.*/", "release": "patch"},
+       {"type": "feat", "scope": "/py.*/", "release": "minor"},
+       {"type": "fix", "scope": "/py.*/", "release": "patch"},
+       {"type": "perf", "scope": "/py.*/", "release": "patch"},
      ]
    }],
    "@semantic-release/release-notes-generator",
