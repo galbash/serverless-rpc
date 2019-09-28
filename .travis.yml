@@ -14,8 +14,9 @@ matrix:
         - cd lib/py
         - bash scripts/publish.sh
 
-    - languange: node_js
-      node_js: lts/*
+    - language: node_js
+      node_js:
+        - node
       before_install:
         - cd plugin
 
