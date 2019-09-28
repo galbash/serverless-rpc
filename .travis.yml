@@ -1,0 +1,21 @@
+
+branches:
+  only:
+    - master
+
+jobs:
+  include:
+    - stage: build-and-deploy-py
+      language: "python3"
+      python:
+        - 3.6
+      install:
+        - pip install -r requirements-dev.txt
+
+      script:
+        - cd lib/py
+        - bash scripts/release.sh
+
+stages:
+  - name: build-and-deploy-py
+    if: branch = master AND type = push

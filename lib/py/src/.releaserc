@@ -1,0 +1,27 @@
+{
+ "plugins": [
+   ["@semantic-release/commit-analyzer", {
+     "preset": "angular",
+     "releaseRules": [
+       {"breaking": true, "scope": "/py.*/", "release": "major"},
+       {"revert": true, "scope": "/py.*/", "release": "patch"},
+       {"type": "feat", "scope": "/py.*/", "release": "minor"},
+       {"type": "fix", "scope": "/py.*/", "release": "patch"},
+       {"type": "perf", "scope": "/py.*/", "release": "patch"},
+
+       {"breaking": true, "release": false},
+       {"revert": true, "release": false},
+       {"type": "feat", "release": false},
+       {"type": "fix", "release": false},
+       {"type": "perf", "release": false},
+
+     ]
+   }],
+   "@semantic-release/release-notes-generator",
+   "@semantic-release/github",
+   ["@semantic-release/exec", {
+     "prepareCmd" : "python ./scripts/set_version.py ${nextRelease.version}",
+     "publishCmd" : "python ./scripts/publish_package.py"
+   }]
+  ]
+}
