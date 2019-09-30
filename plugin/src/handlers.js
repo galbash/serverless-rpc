@@ -5,7 +5,7 @@ const WRAPPER_CODE = {
   python: `
 from HANDLER_PATH import HANDLER as rpc_internal_handler
 from SERVICE_PATH import SERVICE
-from sls_rpc.server.TLambdaServer import TLambdaServer
+from serverless_thrift.server.TLambdaServer import TLambdaServer
 
 processor = SERVICE.Processor(rpc_internal_handler)
 EXPORTED_SERVER = TLambdaServer(processor)
