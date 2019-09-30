@@ -1,3 +1,6 @@
+"""
+A general server for function based (serverless) thrift servers
+"""
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
