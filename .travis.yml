@@ -11,7 +11,13 @@ matrix:
 
       script:
         - cd lib/py
-        - bash scripts/publish.sh
+        - pytest
+
+      deploy:
+        provider: script
+        script: scripts/publish.sh
+        on:
+          branch: master
 
     - language: node_js
       node_js:
@@ -19,8 +25,12 @@ matrix:
       before_install:
         - cd plugin
 
-      script:
-        - npm run build && npm run semantic-release
+      deploy:
+        provider: script
+        script: npm run build && npm run semantic-release
+        on:
+          branch: master
+
 
     - language: node_js
       node_js:
@@ -28,6 +38,9 @@ matrix:
       before_install:
         - cd lib/node
 
-      script:
-        - npm run build && npm run semantic-release
+      deploy:
+        provider: script
+        script: npm run build && npm run semantic-release
+        on:
+          branch: master
 

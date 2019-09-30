@@ -2,7 +2,7 @@
 A Thrift server for AWS Lambda
 """
 from .TFunctionServer import TFunctionServer
-from ..transport.TLambda import TLambdaBaseTransport
+from ..transport.TLambda import TLambdaServerTransport
 
 
 class TLambdaServer(TFunctionServer):
@@ -16,7 +16,7 @@ class TLambdaServer(TFunctionServer):
         :param context: The context the Lambda was triggered with
         :return: The result of the server's execution
         """
-        client = TLambdaBaseTransport(event.encode('utf-8'))
+        client = TLambdaServerTransport(event.encode('utf-8'))
         itrans = self.inputTransportFactory.getTransport(client)
         iprot = self.inputProtocolFactory.getProtocol(itrans)
         otrans = self.outputTransportFactory.getTransport(client)

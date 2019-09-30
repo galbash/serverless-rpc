@@ -115,10 +115,10 @@ class TTransformTransport(TTransport.TTransportBase):
         return self.__read_buffer.getvalue()
 
 
-class TLambdaBaseTransport(TTransformTransport):
+class TLambdaServerTransport(TTransformTransport):
     """
-    Base transport for Lambda communication. Implements the Lambda transport
-    protocol.
+    Server transport for Lambda communication. Implements the Lambda transport
+    protocol - decodes payload on initialization, and encodes on getvalue.
     """
     def __init__(self, value=None):
         """
@@ -129,18 +129,15 @@ class TLambdaBaseTransport(TTransformTransport):
         super().__init__(value=value)
 
 
-    def _transform(self, buf):
+    def getvalue(self):
         """
-        Transforms the data written, and sets it as data to be read.
-        base64 encodes the data.
-        :param buf: The data written to the transport
-        :return: The data to set as readable from the transport
+        see :func:TTransformTransport.getvalue
+        :return:
         """
-        trans_input = super()._transform(buf)
-        return base64.b64encode(trans_input)
+        return base64.b64encode(super().getvalue())
 
 
-class TLambdaClientTransport(TLambdaBaseTransport):
+class TLambdaClientTransport(TTransformTransport):
     """
     Transport for client side of Lambda communication.
     """
@@ -164,7 +161,7 @@ class TLambdaClientTransport(TLambdaBaseTransport):
         :return: The data to set as readable from the transport
         """
         trans_input = super()._transform(buf)
-        return self.__invoke(trans_input)
+        return self.__invoke(base64.b64encode(trans_input))
 
     def __invoke(self, message):
         """
