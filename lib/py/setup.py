@@ -16,7 +16,7 @@ install_reqs = parse_requirements('./requirements.txt', session=PipSession())
 reqs = [str(ir.req) for ir in install_reqs]
 
 # Get version
-with open(os.path.join('src', '__init__.py'), 'rt') as init_file:
+with open(os.path.join('serverless-thrift', '__init__.py'), 'rt') as init_file:
     version = re.search(r'__version__ = \'(.*?)\'', init_file.read()).group(1)
 
 setup(
@@ -28,7 +28,7 @@ setup(
     author='Gal Bashan & Tal Vintrob',
     author_email='galbashan1@gmail.com',
     url='https://github.com/galbash/serverless-rpc',
-    packages=find_packages(exclude=('tests', 'examples')),
+    packages=find_packages(exclude=('test', 'example')),
     install_requires=reqs,
     license='MIT',
     keywords=[
