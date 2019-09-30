@@ -1,9 +1,21 @@
+"""
+A Thrift server for AWS Lambda
+"""
 from .TFunctionServer import TFunctionServer
 from ..transport.TLambda import TLambdaBaseTransport
 
 
 class TLambdaServer(TFunctionServer):
+    """
+    A Thrift server for AWS Lambda
+    """
     def handle(self, event, context):
+        """
+        Handles a request (Lambda invocation)
+        :param event: The event the Lambda was triggered with
+        :param context: The context the Lambda was triggered with
+        :return: The result of the server's execution
+        """
         client = TLambdaBaseTransport(event.encode('utf-8'))
         itrans = self.inputTransportFactory.getTransport(client)
         iprot = self.inputProtocolFactory.getProtocol(itrans)
@@ -22,5 +34,9 @@ class TLambdaServer(TFunctionServer):
         # else:
         # otrans = self.outputTransportFactory.getTransport(client)
         # oprot = self.outputProtocolFactory.getProtocol(otrans)
+
     def __call__(self, event, context):
+        """
+        see :func:handle
+        """
         return self.handle(event, context)
