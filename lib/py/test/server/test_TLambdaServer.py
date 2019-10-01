@@ -43,6 +43,9 @@ class TestTLambdaServer:
             out_trans,
             out_prot,
     ):
+        """
+        Test for a successful Lambda server invocation
+        """
         expected_result = b'success'
         event = b'event'
         encoded_expected_result = base64.b64encode(expected_result).decode('utf-8')
@@ -75,6 +78,9 @@ class TestTLambdaServer:
             out_trans,
             out_prot,
     ):
+        """
+        Test for an error in the input transport factory
+        """
         event = b'event'
         encoded_event = base64.b64encode(event).decode('utf-8')
         error = Exception('error')
@@ -103,6 +109,9 @@ class TestTLambdaServer:
             out_trans,
             out_prot,
     ):
+        """
+        Test for an error in the input protocol factory
+        """
         event = b'event'
         encoded_event = base64.b64encode(event).decode('utf-8')
         error = Exception('error')
@@ -131,6 +140,9 @@ class TestTLambdaServer:
             out_trans,
             out_prot,
     ):
+        """
+        Test for an error in the output transport factory
+        """
         event = b'event'
         encoded_event = base64.b64encode(event).decode('utf-8')
         error = Exception('error')
@@ -159,6 +171,9 @@ class TestTLambdaServer:
             out_trans,
             out_prot,
     ):
+        """
+        Test for an error in the output protocol factory
+        """
         event = b'event'
         encoded_event = base64.b64encode(event).decode('utf-8')
         error = Exception('error')
@@ -188,6 +203,9 @@ class TestTLambdaServer:
             out_trans,
             out_prot,
     ):
+        """
+        Test for an error in the processor
+        """
         event = b'event'
         encoded_event = base64.b64encode(event).decode('utf-8')
         error = Exception('error')

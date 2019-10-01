@@ -1,7 +1,7 @@
 {
-  "name": "serverless-rpc",
-  "version": "1.0.0",
-  "description": "rpc server using aws-lambda",
+  "name": "serverless-thrift",
+  "version": "0.0.0-development",
+  "description": "trhift rpc server using aws-lambda",
   "main": "dist/index.js",
   "directories": {
     "lib": "lib"
