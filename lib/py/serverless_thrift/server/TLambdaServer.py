@@ -9,7 +9,7 @@ class TLambdaServer(TFunctionServer):
     """
     A Thrift server for AWS Lambda
     """
-    def handle(self, event, context):
+    def __handle(self, event, context):
         """
         Handles a request (Lambda invocation)
         :param event: The event the Lambda was triggered with
@@ -39,4 +39,4 @@ class TLambdaServer(TFunctionServer):
         """
         see :func:handle
         """
-        return self.handle(event, context)
+        return self.__handle(event, context)

@@ -161,7 +161,7 @@ class TLambdaClientTransport(TTransformTransport):
         :return: The data to set as readable from the transport
         """
         trans_input = super()._transform(buf)
-        return self.__invoke(base64.b64encode(trans_input))
+        return self.__invoke(trans_input)
 
     def __invoke(self, message):
         """
@@ -172,7 +172,7 @@ class TLambdaClientTransport(TTransformTransport):
         params = {
             'FunctionName': self.__function_name,
             'InvocationType': 'RequestResponse',
-            'Payload': json.dumps(message.decode('utf-8'))
+            'Payload': json.dumps(base64.b64encode(message).decode('utf-8'))
         }
         if self.__qualifier:
             params['Qualifier'] = self.__qualifier
@@ -187,5 +187,10 @@ class TLambdaClientTransport(TTransformTransport):
             return base64.b64decode(json.loads(
                 raw_payload.decode('utf-8')
             ).encode('utf-8'))
-        except (binascii.Error, json.JSONDecodeError, ) as e:
+        except (
+            binascii.Error,
+            json.JSONDecodeError,
+            UnicodeDecodeError,
+            UnicodeEncodeError
+        ) as e:
             raise PayloadDecodeError(raw_payload) from e
