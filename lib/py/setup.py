@@ -16,7 +16,7 @@ install_reqs = parse_requirements('./requirements.txt', session=PipSession())
 reqs = [str(ir.req) for ir in install_reqs]
 
 # Get version
-with open(os.path.join('serverless-thrift', '__init__.py'), 'rt') as init_file:
+with open(os.path.join('serverless_thrift', '__init__.py'), 'rt') as init_file:
     version = re.search(r'__version__ = \'(.*?)\'', init_file.read()).group(1)
 
 setup(

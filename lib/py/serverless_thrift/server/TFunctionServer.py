@@ -19,15 +19,15 @@ class TFunctionServer:
     """
 
     def __init__(self, *args):
-        if (len(args) == 1):
+        if len(args) == 1:
             self.__initArgs__(args[0],
                               TTransport.TTransportFactoryBase(),
                               TTransport.TTransportFactoryBase(),
                               TBinaryProtocol.TBinaryProtocolFactory(),
                               TBinaryProtocol.TBinaryProtocolFactory())
-        elif (len(args) == 3):
+        elif len(args) == 3:
             self.__initArgs__(args[0], args[1], args[1], args[2], args[2])
-        elif (len(args) == 5):
+        elif len(args) == 5:
             self.__initArgs__(args[0], args[1], args[2], args[3], args[4])
 
     def __initArgs__(self, processor,
