@@ -1,0 +1,14 @@
+{
+  "name": "serverless-rpc-python-example",
+  "version": "0.0.0-example",
+  "description": "A python example for the thrift serverless RPC framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.0.0"
+  }
+}

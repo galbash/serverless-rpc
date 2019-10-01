@@ -1,0 +1,17 @@
+service: thrift-rpc-example
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    dockerSsh: true
+
+provider:
+  name: aws
+  runtime: python3.7
+
+functions:
+  hello:
+    handler: handler.server
+    name: tutorial-server
+
+plugins:
+  - serverless-python-requirements
