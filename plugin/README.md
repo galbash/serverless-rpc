@@ -35,13 +35,13 @@ For the best results, make sure this is the first plugin specified in your
 plugins list.
 
 ## Basic Usage
-To register a RPC handler as a function event, use the following when defining your function
+To register an RPC handler as a function event, use the following when defining your function
 ```
 functions:
   my-rpc-function:
     handler: handler.app  # handler should be the file containing your RPC handler.
                           # app should be an initialized RPC handler object, which should
-                          # be registered to the proccessor
+                          # be registered to the processor
     events:
       - rpc:
           service: path/to/service/file.ServiceName  # e.g. tutorial.Calculator for
@@ -88,13 +88,13 @@ of your function in the `serverless.yml` file. Available options:
 suffix, and then the implemented service name. For example if a `Calculator` service is defined
 in `example/tutorial.thrift` file, this member should be set to `example/tutorial.Calculator`
 * `includeDirs` - Directories to include when generating thrift code. defaults to '.'.
-* `outputPath` - Path to store the generated server thrift files. defaults to 'thrift_gen'
+* `outputPath` - Path to store the generated server thrift files. defaults to '.'
 * `genOptions` - Additional options to pass to the thrift compiler
-* `clean` - `true` if the genrerated server files should be cleaned after package, `false` otherwise.
+* `clean` - `true` if the generated server files should be cleaned after packaging, `false` otherwise.
 defaults to `true`
 * `clients` - a list of clients for which generations should occur:
   * `language` - the language in which the client should be generated (required)
-  * `clean` - `true` if the genrerated client files should be cleaned after package, `false` otherwise.
+  * `clean` - `true` if the generated client files should be cleaned after packaging, `false` otherwise.
 defaults to `true` (required)
   * `outputPath` - Path to store the generated client thrift files. 
   * `genOptions` - Additional options to pass to the thrift compiler

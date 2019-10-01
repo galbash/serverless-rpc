@@ -12,6 +12,9 @@ class TestTFunctionServer:
     """
 
     def test_init_one_param(self, processor):
+        """
+        Test one parameter initializer
+        """
         server = TFunctionServer.TFunctionServer(processor)
         self._assert_server_init(
             server,
@@ -21,6 +24,9 @@ class TestTFunctionServer:
         )
 
     def test_init_three_params(self, processor):
+        """
+        Test three parameters initializer
+        """
         trans_class = TTransport.TFramedTransportFactory
         prot_class = TJSONProtocol.TJSONProtocolFactory
         server = TFunctionServer.TFunctionServer(
@@ -36,6 +42,9 @@ class TestTFunctionServer:
         )
 
     def test_init_five_params(self, processor):
+        """
+        Test five parameters initializer
+        """
         in_trans_class = TTransport.TFramedTransportFactory
         in_prot_class = TJSONProtocol.TJSONProtocolFactory
         out_trans_class = TTransport.TBufferedTransportFactory
@@ -64,6 +73,9 @@ class TestTFunctionServer:
 
     ])
     def test_invalid_init(self, initializers):
+        """
+        Test initializing with an invalid parameters number
+        """
         server = TFunctionServer.TFunctionServer(*initializers)
         with pytest.raises(AttributeError):
             server.processor

@@ -21,6 +21,9 @@ class TestTTransformTransport:
     """
 
     def test_close(self):
+        """
+        Test for closing the transport, and attempting operations after it has been closed.
+        """
         trans = TLambda.TTransformTransport()
         trans.close()
         with pytest.raises(ValueError):
@@ -30,16 +33,25 @@ class TestTTransformTransport:
             trans.read(1)
 
     def test_isOpen(self):
+        """
+        Test for the isOpen function (True before closing, False after)
+        """
         trans = TLambda.TTransformTransport()
         assert trans.isOpen()
         trans.close()
         assert not trans.isOpen()
 
     def test_read_empty(self):
+        """
+        Test for reading from the transport when it is empty
+        """
         trans = TLambda.TTransformTransport()
         assert_trans_read_empty(trans)
 
     def test_read_initial_value(self):
+        """
+        Test for reading from the transport after it has been initialized with an initial value
+        """
         value = b'1234'
         trans = TLambda.TTransformTransport(value)
         assert_trans_read_content(trans, value)
@@ -64,26 +76,41 @@ class TestTTransformTransport:
         assert_trans_read_content(trans, value)
 
     def test_flush_empty(self):
+        """
+        Test for flushing an empty transport (no data has been written)
+        """
         trans = TLambda.TTransformTransport()
         trans.flush()
         assert_trans_read_empty(trans)
 
     def test_getvalue_empty(self):
+        """
+        Test for calling `getvalue` on an empty transport
+        """
         trans = TLambda.TTransformTransport()
         assert trans.getvalue() == b''
 
     def test_getvalue_initial_value(self):
+        """
+        Test for calling `getvalue` from a transport that has been initialized with an initial value
+        """
         value = b'1234'
         trans = TLambda.TTransformTransport(value)
         assert trans.getvalue() == value
 
     def test_getvalue_write_no_flush(self):
+        """
+        Test for calling `getvalue` for a transport after writing to it without flushing (should be empty)
+        """
         value = b'1234'
         trans = TLambda.TTransformTransport()
         trans.write(value)
         assert trans.getvalue() == b''
 
     def test_getvalue_write_with_flush(self):
+        """
+        Test for calling `getvalue` for a transport after writing to it and flushing
+        """
         value = b'1234'
         trans = TLambda.TTransformTransport()
         trans.write(value)
@@ -104,30 +131,48 @@ class TestTLambdaServerTransport:
             TLambda.TLambdaServerTransport(value)
 
     def test_decode_initial_value(self):
+        """
+        Test for initializing the transport with a well-encoded initial value
+        """
         value = b'1234'
         trans = TLambda.TLambdaServerTransport(base64.b64encode(value))
         assert_trans_read_content(trans, value)
 
     def test_empty_initial(self):
+        """
+        Test for initializing the transport without initial value
+        """
         trans = TLambda.TLambdaServerTransport()
         assert_trans_read_empty(trans)
 
     def test_getvalue_empty(self):
+        """
+        Test for calling the `getvalue` function when the transport's read buffer is empty
+        """
         trans = TLambda.TLambdaServerTransport()
         assert trans.getvalue() == b''
 
     def test_getvalue_initial_value(self):
+        """
+        Test for calling `getvalue` from a transport that has been initialized with an initial value
+        """
         value = b'1234'
         trans = TLambda.TLambdaServerTransport(base64.b64encode(value))
         assert trans.getvalue() == base64.b64encode(value)
 
     def test_getvalue_write_no_flush(self):
+        """
+        Test for calling `getvalue` for a transport after writing to it without flushing (should be empty)
+        """
         value = b'1234'
         trans = TLambda.TLambdaServerTransport()
         trans.write(value)
         assert trans.getvalue() == b''
 
     def test_getvalue_write_with_flush(self):
+        """
+        Test for calling `getvalue` for a transport after writing to it and flushing
+        """
         value = b'1234'
         trans = TLambda.TLambdaServerTransport()
         trans.write(value)
@@ -144,6 +189,9 @@ class TestTLambdaClientTransport:
     TEST_RESPONSE_PAYLOAD = b'response'
 
     def test_read_no_write(self):
+        """
+        Test for reading data from the transport without data being written to if first
+        """
         client_mock_obj = unittest.mock.NonCallableMagicMock()
         with unittest.mock.patch(
             'boto3.client',
@@ -155,6 +203,10 @@ class TestTLambdaClientTransport:
 
 
     def test_read_no_flush(self):
+        """
+        Test for reading data from the transport after writing data to the transport
+        but not flushing it
+        """
         client_mock_obj = unittest.mock.NonCallableMagicMock()
         with unittest.mock.patch(
             'boto3.client',
@@ -196,6 +248,10 @@ class TestTLambdaClientTransport:
         }
 
     def test_read_after_flush_valid_response(self):
+        """
+        Sanity test. Tests reading data from the transport after writing a request and flushing
+        it, which triggers the request to be sent and the response to be received and decoded
+        """
         response = self._create_server_response(self.TEST_RESPONSE_PAYLOAD)
         client_mock_obj = self._create_test_mock(response)
 
@@ -215,6 +271,11 @@ class TestTLambdaClientTransport:
             )
 
     def test_read_after_flush_valid_response_with_qualifier(self):
+        """
+        Sanity test. Tests reading data from the transport after writing a request and flushing
+        it, which triggers the request to be sent and the response to be received and decoded.
+        In this test we invoke a specific Lambda server version (using a qualifier)
+        """
         response = self._create_server_response(self.TEST_RESPONSE_PAYLOAD)
         client_mock_obj = self._create_test_mock(response)
         qualifier = 1
@@ -239,6 +300,12 @@ class TestTLambdaClientTransport:
             )
 
     def test_read_after_flush_function_error(self):
+        """
+        Tests reading data from the transport after writing a request and flushing
+        it, which triggers the request to be sent and the response to be received and decoded.
+        In this test the Server has an error and the response received indicates a Lambda
+        error
+        """
         response = {
             'StatusCode': 500,
             'FunctionError': 'Internal Server Error',
@@ -274,6 +341,12 @@ class TestTLambdaClientTransport:
         },
     ])
     def test_read_after_flush_invalid_response(self, response):
+        """
+        Tests reading data from the transport after writing a request and flushing
+        it, which triggers the request to be sent and the response to be received and decoded.
+        In this test the Server returns a response, but it is encoded wrong and the client
+        cannot decode it.
+        """
         client_mock_obj = self._create_test_mock(response)
 
         with unittest.mock.patch(
