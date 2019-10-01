@@ -139,13 +139,7 @@ export default class ServerlessThriftRPC {
         const [key, func] = pair;
         const runtime = func.runtime || this.sls.service.provider.runtime;
 
-        let rpc;
-        const events = func.events || [];
-        events.forEach((event) => {
-          if (event.rpc) {
-            ({ rpc } = event);
-          }
-        });
+        const { rpc } = func;
 
         if (!rpc || !_.isString(rpc.service)) {
           // not an rpc triggered function

@@ -42,10 +42,9 @@ functions:
     handler: handler.app  # handler should be the file containing your RPC handler.
                           # app should be an initialized RPC handler object, which should
                           # be registered to the processor
-    events:
-      - rpc:
-          service: path/to/service/file.ServiceName  # e.g. tutorial.Calculator for
-                                                     # Calculator service in tutorial.thrift file
+    rpc:
+      service: path/to/service/file.ServiceName  # e.g. tutorial.Calculator for
+                                                 # Calculator service in tutorial.thrift file
 ```
 
 ## Client Generation
@@ -54,12 +53,11 @@ In order to generate clients for the service, define clients to the server:
 functions:
   my-rpc-function:
     handler: handler.app
-    events:
-      - rpc:
-          service: path/to/service/file.ServiceName
-          clients:
-            - language: py  # one of the supported languages
-              outputPath: path/to/client/generated/files
+    rpc:
+      service: path/to/service/file.ServiceName
+      clients:
+        - language: py  # one of the supported languages
+          outputPath: path/to/client/generated/files
 ```
 
 You can generate as many clients as you'd like for a single service.
@@ -82,7 +80,7 @@ if this option is specified, outputPath different then '.' must be specified as 
 handlers in. Do not use this option unless you know what you are doing :)
 
 ### Function Level Options
-These options are defined at the function level, under the `events.[x].rpc` member
+These options are defined at the function level, under the `rpc` member
 of your function in the `serverless.yml` file. Available options:
 * `service` - Path to the thrift service. contains the path to the file (without the `.thrift`)
 suffix, and then the implemented service name. For example if a `Calculator` service is defined
