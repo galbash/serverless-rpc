@@ -1,19 +1,17 @@
 import fs from 'fs-extra';
-import cp from 'child_process';
 import _ from 'lodash';
 import { join } from 'path';
-import { SUPPORTED_LANGUAGES, generateWrapperCode, generateWrapperExt } from './handlers';
+import { generateWrapperCode, generateWrapperExt, SUPPORTED_LANGUAGES } from './handlers';
+import generateThrift from './thrift_utils';
 
-function generateThrift(includeDirs, outDir, target, serviceDef) {
-  fs.mkdirpSync(outDir);
-  cp.spawnSync(
-    'thrift',
-    ['-I', includeDirs.join(' '), '-r', '-out', outDir, '--gen', target, serviceDef]
-    // `thrift -I ${includeDirs.join(' ')} -r -out ${outDir} --gen ${target} ${serviceDef}`
-  );
-}
-
+/**
+ * A plugin to enable auto generation for Thrift-compatible Lambda server
+ */
 export default class ServerlessThriftRPC {
+  /**
+   * @param sls The serverless object for this execution
+   * @param opts Additional options
+   */
   constructor(sls = {}, opts) {
     this.sls = sls;
     this.prefix =
@@ -73,10 +71,20 @@ export default class ServerlessThriftRPC {
     };
   }
 
+  /**
+   * Logs a message to the console
+   * @param format The log format
+   * @param args The log arguments
+   */
   log(format, ...args) {
     this.sls.cli.log(`[serverless-thrift-rpc] ${format}`, ...args);
   }
 
+  /**
+   * Converts a Lambda runtime name to a Thrift language name
+   * @param runtime The Lambda runtime name
+   * @return {String} The language name
+   */
   runtimeToThriftLanguage(runtime) {
     if (!runtime) {
       return null;
@@ -89,11 +97,17 @@ export default class ServerlessThriftRPC {
     return null;
   }
 
+  /**
+   * @return {String} Thrift language of the service
+   * */
   serviceThriftLanguage() {
     const { runtime } = this.sls.service.provider;
     return this.runtimeToThriftLanguage(runtime);
   }
 
+  /**
+   * @return {Object} The current rpc plugin config
+   */
   config() {
     return Object.assign({
       // thrift generation
@@ -113,6 +127,9 @@ export default class ServerlessThriftRPC {
     }, (this.sls.service.custom || {}).rpc || {});
   }
 
+  /**
+   * Generates the server Thrift, the server handlers and the client Thrift
+   */
   async generateAll() {
     this.log('assigning RPC event handlers');
     const config = this.config();
@@ -129,6 +146,12 @@ export default class ServerlessThriftRPC {
     }
   }
 
+  /**
+   * Finds RPC functions in the service and returns a list of these
+   * functions enriched with additional data needed for wrapping
+   * Caches the functions, so doing the calculation only once per execution.
+   * @return {Array<Object>} The list of functions.
+   */
   findFuncs() {
     if (this.funcsFound) {
       return this.funcs;
@@ -170,12 +193,18 @@ export default class ServerlessThriftRPC {
       }, []);
   }
 
+  /**
+   * Generates wrapping handlers for server initialization
+   */
   async generateHandlers() {
     fs.removeSync(join(this.originalServicePath, this.config().handlersDirName));
     await this.generateHandlersCode();
-    await this.assignHandlers();
+    this.assignHandlers();
   }
 
+  /**
+   * Generates and writes the handlers code to the disk.
+   */
   async generateHandlersCode() {
     const handlersFullDirPath = join(
       this.originalServicePath,
@@ -201,6 +230,10 @@ export default class ServerlessThriftRPC {
     }));
   }
 
+  /**
+   * Updates the SLS object with the generated wrapping handlers for the
+   * appropriate functions.
+   */
   assignHandlers() {
     this.funcs.forEach((func) => {
       const handlerPath = `${this.config().handlersDirName.replace('\\', '/')}/${func.rpcHandlerFile}`;
@@ -222,6 +255,9 @@ export default class ServerlessThriftRPC {
     }
   }
 
+  /**
+   * Generates server's code from service IDL.
+   */
   async generateServer() {
     this.log('generating server');
     const serviceConfig = this.config();
@@ -244,10 +280,18 @@ export default class ServerlessThriftRPC {
     });
   }
 
+  /**
+   * Finds the definition path of a specific thrift service
+   * @param rpcConfig a function's RPC config
+   * @return {string} The service's path
+   */
   getServiceDefinitionPath(rpcConfig) {
     return `${rpcConfig.service.split('.').slice(0, -1).join('.')}.thrift`;
   }
 
+  /**
+   * Cleans all plugin-generated files
+   */
   async cleanup() {
     this.log('starting cleanup');
     const config = this.config();
@@ -261,6 +305,9 @@ export default class ServerlessThriftRPC {
     }
   }
 
+  /**
+   * Cleans server generated code (from IDL)
+   */
   async cleanServer() {
     this.log('cleaning server');
     const serviceConfig = this.config();
@@ -274,6 +321,9 @@ export default class ServerlessThriftRPC {
     });
   }
 
+  /**
+   * Cleans client generated code (from IDL)
+   */
   async cleanClients() {
     this.log('cleaning clients');
     this.funcs = this.findFuncs();
@@ -290,12 +340,19 @@ export default class ServerlessThriftRPC {
     });
   }
 
+  /**
+   * Generates clients from service IDL, according to configuration
+   */
   async generateClients() {
     this.log('generating clients');
     const serviceConfig = this.config();
     this.funcs = this.findFuncs();
     this.funcs.forEach((func) => {
       const { rpcConfig } = func;
+      if (!rpcConfig.clients) {
+        return;
+      }
+
       rpcConfig.clients.forEach((client) => {
         generateThrift(
           rpcConfig.includeDirs || serviceConfig.includeDirs,
