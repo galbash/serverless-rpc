@@ -12,9 +12,6 @@
         "indent": ["error", 2],
         "function-paren-newline": ["error", "consistent"],
         "operator-linebreak": ["error", "after"],
-        "valid-jsdoc": ["error", {
-            "requireReturn": false
-        }],
         "comma-dangle": ["error", {
             "arrays": "always-multiline",
             "objects": "always-multiline",

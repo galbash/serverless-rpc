@@ -22,8 +22,12 @@ matrix:
     - language: node_js
       node_js:
         - node
+
       before_install:
         - cd plugin
+
+      script:
+        - npm run lint
 
       deploy:
         provider: script
@@ -35,6 +39,7 @@ matrix:
     - language: node_js
       node_js:
         - node
+
       before_install:
         - cd lib/node
 
