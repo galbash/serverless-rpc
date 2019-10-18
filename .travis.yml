@@ -6,15 +6,19 @@ matrix:
   include:
     - language: python
       python: 3.6
+
+      before_install:
+          - cd lib/py
+
       install:
-        - pip install -r lib/py/requirements-dev.txt
+        - pip install -r requirements-dev.txt
 
       script:
-        - cd lib/py
         - python -m pytest
 
       deploy:
         provider: script
+        skip_cleanup: true
         script: scripts/publish.sh
         on:
           branch: master
@@ -31,6 +35,7 @@ matrix:
 
       deploy:
         provider: script
+        skip_cleanup: true
         script: npm run build && npm run semantic-release
         on:
           branch: master
@@ -45,6 +50,7 @@ matrix:
 
       deploy:
         provider: script
+        skip_cleanup: true
         script: npm run build && npm run semantic-release
         on:
           branch: master
