@@ -20,7 +20,7 @@ class LambdaTransportError(TTransport.TTransportException):
 class LambdaServerError(LambdaTransportError):
     """
     A Lambda-related server error (internal to the Lambda server,
-    not the application)
+    not the user application)
     """
     def __init__(self, response):
         """

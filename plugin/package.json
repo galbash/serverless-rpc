@@ -4,6 +4,7 @@
   "description": "Serverless framework plugin to create RPC servers on serverless function",
   "main": "dist/bundle.js",
   "scripts": {
+    "lint:js:fix": "eslint --max-warnings=0 ./src/ -f table --ext .js --ext .jsx --fix",
     "lint:js": "eslint --max-warnings=0 ./src/ -f table --ext .js --ext .jsx",
     "lint": "npm run lint:js",
     "build:dev": "rollup -c",
