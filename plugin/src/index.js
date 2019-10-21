@@ -81,28 +81,10 @@ export default class ServerlessThriftRPC {
   }
 
   /**
-   * Converts a Lambda runtime name to a Thrift language name
-   * @param runtime The Lambda runtime name
-   * @return {String} The language name
-   */
-  runtimeToThriftLanguage(runtime) {
-    if (!runtime) {
-      return null;
-    }
-
-    if (runtime.startsWith('python')) {
-      return 'py';
-    }
-
-    return null;
-  }
-
-  /**
-   * @return {String} Thrift language of the service
+   * @return {String} returns the service runtime.
    * */
-  serviceThriftLanguage() {
-    const { runtime } = this.sls.service.provider;
-    return this.runtimeToThriftLanguage(runtime);
+  serviceRuntime() {
+    return this.sls.service.provider.runtime;
   }
 
   /**
@@ -120,7 +102,7 @@ export default class ServerlessThriftRPC {
       // server config
       generateServer: true,
       cleanServer: false,
-      language: this.serviceThriftLanguage(),
+      language: this.serviceRuntime(),
 
       // generated code config
       handlersDirName: 'serverless_rpc_handlers',
@@ -264,18 +246,15 @@ export default class ServerlessThriftRPC {
     this.funcs = this.findFuncs();
     this.funcs.forEach((func) => {
       const { rpcConfig } = func;
-      const thriftLang = this.runtimeToThriftLanguage(func.runtime) || this.serviceThriftLanguage();
+      const runtime = func.runtime || this.serviceRuntime();
 
-      const genOptions = (
-        rpcConfig.genOptions ? // eslint-disable-line no-nested-ternary
-          `${thriftLang}:${rpcConfig.genOptions}` :
-          (serviceConfig.genOptions ? `${thriftLang}:${serviceConfig.genOptions}` : thriftLang)
-      );
+      const genOptions = rpcConfig.genOptions || serviceConfig.genOptions;
       generateThrift(
         rpcConfig.includeDirs || serviceConfig.includeDirs,
         rpcConfig.outputPath || serviceConfig.outputPath,
-        genOptions,
-        this.getServiceDefinitionPath(rpcConfig)
+        runtime,
+        this.getServiceDefinitionPath(rpcConfig),
+        genOptions
       );
     });
   }
@@ -357,8 +336,9 @@ export default class ServerlessThriftRPC {
         generateThrift(
           rpcConfig.includeDirs || serviceConfig.includeDirs,
           client.outputPath,
-          client.genOptions ? `${client.language}:${client.genOptions}` : client.language,
-          this.getServiceDefinitionPath(rpcConfig)
+          client.language,
+          this.getServiceDefinitionPath(rpcConfig),
+          client.genOptions
         );
       });
     });

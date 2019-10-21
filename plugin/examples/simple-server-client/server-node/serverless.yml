@@ -10,7 +10,7 @@ custom:
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: nodejs10.x
 
 functions:
   hello:
@@ -18,10 +18,10 @@ functions:
     name: tutorial-server
     rpc:
       service: services/tutorial.Calculator
+      outputPath: gen-nodejs
       clients:
         - language: py
-          outputPath: ../client
+          outputPath: ../client-python
 
 plugins:
-  - serverless-python-requirements
   - serverless-plugin-thrift

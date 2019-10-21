@@ -1,0 +1,17 @@
+{
+  "name": "serverless-rpc-nodejs-example",
+  "version": "0.0.0-example",
+  "description": "A node example for the thrift serverless RPC framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-plugin-thrift": "^1.3.0"
+  },
+  "dependencies": {
+    "serverless-thrift": "^1.4.0"
+  }
+}
