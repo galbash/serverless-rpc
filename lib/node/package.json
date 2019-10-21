@@ -3,10 +3,13 @@
   "version": "0.0.0-development",
   "description": "trhift rpc server using aws-lambda",
   "main": "dist/index.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "lint:js:fix": "eslint --max-warnings=0 ./lib/ -f table --ext .js --ext .jsx --fix",
+    "lint:js": "eslint --max-warnings=0 ./lib/ -f table --ext .js --ext .jsx",
+    "lint": "npm run lint:js",
     "build": "babel lib -d dist",
     "clean": "rm -r dist/",
     "semantic-release": "semantic-release"
@@ -21,7 +24,7 @@
     "rpc",
     "lambda"
   ],
-  "author": "Tal Vintrob",
+  "author": "Tal Vintrob & Gal Bashan",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/galbash/serverless-rpc/issues"
@@ -30,10 +33,27 @@
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-private-methods": "^7.6.0",
+    "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/preset-env": "^7.5.5",
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-angular": "^7.5.0",
+    "@commitlint/config-conventional": "^7.5.0",
+    "babel-eslint": "^11.0.0-beta.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-chai-friendly": "^0.4.1",
+    "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-json": "^1.4.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-mocha": "^4.11.0",
+    "eslint-plugin-react": "^7.14.3",
     "semantic-release": "^15.13.24"
   },
   "dependencies": {
-    "aws-sdk": "^2.510.0"
+    "@babel/runtime": "^7.6.3",
+    "aws-sdk": "^2.510.0",
+    "thrift": "^0.12.0"
   }
 }

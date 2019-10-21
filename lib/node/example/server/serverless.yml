@@ -1,0 +1,14 @@
+service: thrift-rpc-example
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    dockerSsh: true
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+
+functions:
+  hello:
+    handler: server.server
+    name: tutorial-server

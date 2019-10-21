@@ -48,6 +48,9 @@ matrix:
       before_install:
         - cd lib/node
 
+      script:
+        - npm run lint
+
       deploy:
         provider: script
         skip_cleanup: true
