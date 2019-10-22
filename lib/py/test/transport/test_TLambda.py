@@ -130,6 +130,13 @@ class TestTLambdaServerTransport:
         with pytest.raises(binascii.Error):
             TLambda.TLambdaServerTransport(value)
 
+    def test_empty_initial(self):
+        """
+        Test for initializing the transport without initial value
+        """
+        trans = TLambda.TLambdaServerTransport()
+        assert_trans_read_empty(trans)
+
     def test_decode_initial_value(self):
         """
         Test for initializing the transport with a well-encoded initial value
@@ -137,13 +144,6 @@ class TestTLambdaServerTransport:
         value = b'1234'
         trans = TLambda.TLambdaServerTransport(base64.b64encode(value))
         assert_trans_read_content(trans, value)
-
-    def test_empty_initial(self):
-        """
-        Test for initializing the transport without initial value
-        """
-        trans = TLambda.TLambdaServerTransport()
-        assert_trans_read_empty(trans)
 
     def test_getvalue_empty(self):
         """

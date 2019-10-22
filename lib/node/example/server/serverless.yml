@@ -10,5 +10,5 @@ provider:
 
 functions:
   hello:
-    handler: server.server
+    handler: server.handle
     name: tutorial-server
