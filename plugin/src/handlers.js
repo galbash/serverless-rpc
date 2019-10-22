@@ -7,10 +7,11 @@ const serverlessThrift = require('serverless-thrift');
 const { HANDLER: rpcInternalHandler } = require('../HANDLER_PATH.js');
 const SERVICE = require('../SERVICE_PATH');
 
-module.exports.EXPORTED_SERVER = serverlessThrift.createLambdaServer(
+const generatedServer = serverlessThrift.createLambdaServer(
     SERVICE,
     rpcInternalHandler
 );
+module.exports.EXPORTED_SERVER = generatedServer.handle.bind(generatedServer);
 `,
   python: `
 from HANDLER_PATH import HANDLER as rpc_internal_handler

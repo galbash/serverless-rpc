@@ -12,7 +12,9 @@
     "lint": "npm run lint:js",
     "build": "babel lib -d dist",
     "clean": "rm -r dist/",
-    "semantic-release": "semantic-release"
+    "prepublishOnly": "npm run build",
+    "semantic-release": "semantic-release",
+    "test": "mocha --require esm --recursive test"
   },
   "repository": {
     "type": "git",
@@ -41,15 +43,19 @@
     "@commitlint/config-angular": "^7.5.0",
     "@commitlint/config-conventional": "^7.5.0",
     "babel-eslint": "^11.0.0-beta.0",
+    "chai": "^4.2.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-chai-friendly": "^0.4.1",
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-mocha": "^4.11.0",
+    "eslint-plugin-mocha": "^4.12.1",
     "eslint-plugin-react": "^7.14.3",
-    "semantic-release": "^15.13.24"
+    "esm": "^3.2.25",
+    "mocha": "^6.2.2",
+    "semantic-release": "^15.13.24",
+    "sinon": "^7.5.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.3",

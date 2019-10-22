@@ -10,7 +10,8 @@
     "build:dev": "rollup -c",
     "build": "NODE_ENV=production rollup -c",
     "clean": "rm -r dist/",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
