@@ -1,8 +1,8 @@
 # Thrift RPC Serverless Framework Plugin
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![npm version](https://badge.fury.io/js/serverless-thrift-rpc.svg)](https://badge.fury.io/js/serverless-plugin-thrift)
-
+[![npm version](https://badge.fury.io/js/serverless-plugin-thrift.svg)](https://badge.fury.io/js/serverless-plugin-thrift)
+[![Build Status](https://travis-ci.com/galbash/serverless-plugin-thrift.svg?branch=master)](https://travis-ci.com/galbash/serverless-plugin-thrift)
 Serverless Framework plugin to enable thrift RPC events as function triggers
 
 ## Installation
