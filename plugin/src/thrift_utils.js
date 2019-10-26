@@ -2,7 +2,8 @@ import fs from 'fs-extra';
 import cp from 'child_process';
 
 /**
- * Converts a Lambda runtime name to a Thrift language name
+ * Converts a Lambda runtime name to a Thrift language name. If already given a thrift
+ * Language, returns it unchanged.
  * @param runtime The Lambda runtime name
  * @return {String} The language name
  */
@@ -11,11 +12,11 @@ function runtimeToThriftLanguage(runtime) {
     return null;
   }
 
-  if (runtime.startsWith('python')) {
+  if (runtime.startsWith('py')) {
     return 'py';
   }
 
-  if (runtime.startsWith('node')) {
+  if (runtime.startsWith('node') || runtime.startsWith('js')) {
     return 'js';
   }
 
@@ -26,7 +27,7 @@ function runtimeToThriftLanguage(runtime) {
  * Generates thrift code from IDL
  * @param includeDirs directories to search .thrift files in
  * @param outDir The directory to output the generated files to
- * @param runtime The Lambda runtime
+ * @param runtime The Lambda runtime or thrift language
  * @param options The options to use for generation
  * @param serviceDef the path for the service to generate
  */

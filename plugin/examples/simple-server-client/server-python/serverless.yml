@@ -21,6 +21,9 @@ functions:
       clients:
         - language: py
           outputPath: ../client-python
+        - language: js
+          outputPath: ../client-node
+          genOptions: es6
 
 plugins:
   - serverless-python-requirements
