@@ -2,10 +2,12 @@
     "extends": "airbnb",
     "env": {
         "node": true,
-        "browser": false
+        "browser": false,
+        "mocha": true
     },
     "plugins": [
-        "json"
+        "json",
+        "mocha"
     ],
     "parser": "babel-eslint",
     "rules": {
@@ -21,5 +23,13 @@
             "exports": "never",
             "functions": "never"
         }]
-    }
+    },
+    "overrides": [
+        {
+            "files": ["*.test.js", "*.spec.js"],
+            "rules": {
+                "no-unused-expressions": "off"
+            }
+        }
+    ]
 }
