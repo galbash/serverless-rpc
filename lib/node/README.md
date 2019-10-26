@@ -21,7 +21,7 @@ Simply use the `createLambdaServer` function to wrap your Thrift handler:
 ```node
 const serverlessThrift = require("serverless-thrift")
 const Calculator = require("./gen-nodejs/Calculator");
-Const handler = require("./calculator_handler.js");
+const handler = require("./calculator_handler.js");
 
 const server = serverlessThrift.createLambdaServer(Calculator, handler);
 module.exports.handle = server.handle.bind(server);
