@@ -17,7 +17,7 @@ pip install serverless-thrift
 
 ## Getting started (AWS Lambda)
 
-Simply use the `createLambdaServer` function to wrap your Thrift handler:
+Simply use the `TLambdaServer` create a server from your processor:
 
 ```node
 from serverless_thrift.server.TLambdaServer import TLambdaServer
