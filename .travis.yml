@@ -6,8 +6,10 @@ matrix:
   include:
     - language: python
       python: 3.6
+      node_js: node
 
       before_install:
+          - nvm use node
           - cd lib/py
 
       install:
