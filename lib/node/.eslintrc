@@ -9,6 +9,7 @@
     ],
     "parser": "babel-eslint",
     "rules": {
+        "new-cap":["error", {"properties": false}],
         "class-methods-use-this": "off",
         "indent": ["error", 2],
         "function-paren-newline": ["error", "consistent"],
