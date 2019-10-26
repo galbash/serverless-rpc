@@ -1,0 +1,14 @@
+{
+  "name": "rpc-example-node-client",
+  "version": "1.0.0",
+  "description": "an example Thrift client using the Lambda connection",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serverless-thrift": "^1.5.0"
+  }
+}
