@@ -23,11 +23,12 @@ rb/
 
 # CI/CD
 ## Versioning
-The project uses semantic versioning, along with semantic release which automates the release process. For each merge to master, we will check if a deploy is required. The semantic release will be configured for each library to look only for relevant commits (meaning that if the commit scope is py-<something>, only the python library will be affected by this commit). It will look for commits of type “fix”, “feat” or breaking changes, increase the version accordingly and release a new version only if required.
+The project uses [semantic versioning](https://semver.org/), along with [semantic release](https://github.com/semantic-release/semantic-release) which automates the release process. For each merge to master, we will check if a deploy is required. The semantic release will be configured for each library to look only for relevant commits (meaning that if the commit scope is py-<something>, only the python library will be affected by this commit). It will look for commits of type “fix”, “feat” or breaking changes, increase the version accordingly and release a new version only if required.
+
 The scope prefixes are:
-py - Python
-node - Node.js
-plugin - serverless framework plugin
-all - affects the entire project
+* `py` - Python
+* `node` - Node.js
+* `plugin` - serverless framework plugin
+* `all` - affects the entire project
 
 
