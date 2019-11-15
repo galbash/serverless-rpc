@@ -27,14 +27,6 @@ class TLambdaServer(TFunctionServer):
         result = otrans.getvalue().decode('utf-8')
         return result
 
-        # not supported yet
-        # if isinstance(self.inputProtocolFactory, THeaderProtocolFactory):
-        # otrans = None
-        # oprot = iprot
-        # else:
-        # otrans = self.outputTransportFactory.getTransport(client)
-        # oprot = self.outputProtocolFactory.getProtocol(otrans)
-
     def __call__(self, event, context):
         """
         see :func:handle
